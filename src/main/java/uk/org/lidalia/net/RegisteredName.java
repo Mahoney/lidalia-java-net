@@ -1,4 +1,7 @@
 package uk.org.lidalia.net;
 
-public interface RegisteredName extends Host {
+public class RegisteredName extends Host {
+	RegisteredName(String wrappedValue) {
+		super(wrappedValue);
+	}
 }

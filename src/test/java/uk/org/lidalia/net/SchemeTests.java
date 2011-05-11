@@ -3,11 +3,12 @@ package uk.org.lidalia.net;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
-import static uk.org.lidalia.net.Scheme.Scheme;
+import static uk.org.lidalia.net.uri.Scheme.Scheme;
 
 import org.junit.Test;
+import uk.org.lidalia.net.uri.Scheme;
 
-public class SchemeTest {
+public class SchemeTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void schemeCannotBeNull() {

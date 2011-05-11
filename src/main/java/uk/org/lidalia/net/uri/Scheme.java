@@ -1,9 +1,7 @@
-package uk.org.lidalia.net;
+package uk.org.lidalia.net.uri;
 
 import static uk.org.lidalia.net.Port.Port;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -11,8 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.Validate;
 
 import uk.org.lidalia.lang.Maps;
-import uk.org.lidalia.lang.Utils;
 import uk.org.lidalia.lang.WrappedString;
+import uk.org.lidalia.net.Port;
 
 public final class Scheme extends WrappedString {
 	
@@ -31,7 +29,7 @@ public final class Scheme extends WrappedString {
 	public static Scheme register(String schemeName) {
 		return register(schemeName, null);
 	}
-	
+
 	public static Scheme register(String schemeName, Port defaultPort) {
 		return Maps.putIfAbsentReturningValue(schemes, schemeName, new Scheme(schemeName, defaultPort));
 	}
@@ -60,6 +58,10 @@ public final class Scheme extends WrappedString {
 
 	public Port getDefaultPort() {
 		return defaultPort;
+	}
+
+	public boolean isDefaultPort(Port port) {
+		return port != null && port.equals(defaultPort);
 	}
 
 	@Override

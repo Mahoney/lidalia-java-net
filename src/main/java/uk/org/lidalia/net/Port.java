@@ -6,7 +6,11 @@ import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.WrappedValue;
 
 public final class Port extends WrappedValue<Integer> implements Immutable {
-	
+
+	public static Port Port(String portStr) {
+		return Port(Integer.parseInt(portStr));
+	}
+
 	public static Port Port(Integer portNumber) {
 		return new Port(portNumber);
 	}
