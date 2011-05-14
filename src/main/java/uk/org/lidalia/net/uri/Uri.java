@@ -4,6 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import uk.org.lidalia.lang.Immutable;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import static uk.org.lidalia.net.uri.Fragment.Fragment;
 import static uk.org.lidalia.net.uri.HierarchicalPart.HierarchicalPart;
 import static uk.org.lidalia.net.uri.Query.Query;
@@ -26,10 +29,6 @@ public class Uri implements Immutable {
 		return Uri(scheme, hierarchicalPart, query, fragment);
 	}
 
-	public static Uri Uri(String schemeStr, String hierarchicalPartStr) {
-		return new Uri(Scheme(schemeStr), HierarchicalPart(hierarchicalPartStr), null, null);
-	}
-
 	public static Uri Uri(String schemeStr, String hierarchicalPartStr, String queryStr, String fragmentStr) {
 		return new Uri(Scheme(schemeStr), HierarchicalPart(hierarchicalPartStr), Query.Query(queryStr), Fragment(fragmentStr));
 	}
@@ -48,6 +47,9 @@ public class Uri implements Immutable {
 
 	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query, Fragment fragment) {
 		return new Uri(scheme, hierarchicalPart, query, fragment);
+	}
+	public static Uri Uri(URI javaUri) {
+		return Uri(javaUri.toString());
 	}
 
 	private final Scheme scheme;
@@ -80,18 +82,36 @@ public class Uri implements Immutable {
 		return fragment;
 	}
 
+	public Authority getAuthority() {
+		return hierarchicalPart.getAuthority();
+	}
+
+	public Path getPath() {
+		return hierarchicalPart.getPath();
+	}
+
+	public URI toURI() {
+		try {
+			return new URI(scheme.toString(), getAuthority().toString(), getPath().toString(), query.toString(), fragment.toString());
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("Uri [" + this + "] should always be a valid java.net.URI", e);
+		}
+	}
+
 	@Override public Uri toImmutable() {
 		return this;
 	}
 
 	@Override public String toString() {
-		String baseUri =  scheme + ":" + hierarchicalPart.toString(scheme);
-		String uriWithQuery = (query == null) ? baseUri : baseUri + "?" + query;
-		return (fragment == null) ? uriWithQuery : uriWithQuery + "#" + fragment;
+		return toString(hierarchicalPart.toString(scheme));
 	}
 
 	public String toStringMaintainingPort() {
-		String baseUri =  scheme + ":" + hierarchicalPart.toString();
+		return toString(hierarchicalPart.toString());
+	}
+
+	private String toString(String hierarchicalPartStr) {
+		String baseUri =  scheme + ":" + hierarchicalPartStr;
 		String uriWithQuery = (query == null) ? baseUri : baseUri + "?" + query;
 		return (fragment == null) ? uriWithQuery : uriWithQuery + "#" + fragment;
 	}

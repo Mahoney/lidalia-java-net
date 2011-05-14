@@ -3,7 +3,6 @@ package uk.org.lidalia.net;
 import org.junit.Test;
 import uk.org.lidalia.net.uri.Authority;
 import uk.org.lidalia.net.uri.Scheme;
-import uk.org.lidalia.net.uri.UserInfo;
 
 import static org.junit.Assert.assertNull;
 import static uk.org.lidalia.net.Host.Host;

@@ -5,51 +5,55 @@ import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.net.Host;
 import uk.org.lidalia.net.Port;
 
-import static uk.org.lidalia.net.Host.Host;
-import static uk.org.lidalia.net.Port.Port;
 import static uk.org.lidalia.net.uri.UserInfo.UserInfo;
+import static uk.org.lidalia.net.uri.HostAndPort.HostAndPort;
 
 public class Authority implements Immutable {
 
 	public static Authority Authority(String authority) {
 		String userInfoStr;
-		String hostAndPort;
+		String hostAndPortStr;
 		if (authority.contains("@")) {
 			userInfoStr = StringUtils.substringBefore(authority, "@");
-			hostAndPort = StringUtils.substringAfter(authority, "@");
+			hostAndPortStr = StringUtils.substringAfter(authority, "@");
 		} else {
 			userInfoStr = null;
-			hostAndPort = authority;
+			hostAndPortStr = authority;
 		}
 		UserInfo userInfo = (userInfoStr == null) ? null : UserInfo(userInfoStr);
-		String portStr = StringUtils.substringAfterLast(hostAndPort, ":");
-		Port port = (portStr.isEmpty()) ? null : Port(portStr);
-		String hostStr = StringUtils.substringBeforeLast(hostAndPort, ":");
-		Host host = Host(hostStr);
-		return new Authority(userInfo, host, port);
+		HostAndPort hostAndPort = HostAndPort.HostAndPort(hostAndPortStr);
+		if (userInfo == null) {
+			return hostAndPort;
+		} else {
+			return new Authority(userInfo, hostAndPort.getHost(), hostAndPort.getPort());
+		}
 	}
 
-	public static Authority Authority(Host host) {
-		return new Authority(null, host, null);
+	public static HostAndPort Authority(Host host) {
+		return HostAndPort(host);
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host) {
-		return new Authority(userInfo, host, null);
+		return Authority(userInfo, host, null);
 	}
 
-	public static Authority Authority(Host host, Port port) {
-		return new Authority(null, host, port);
+	public static HostAndPort Authority(Host host, Port port) {
+		return HostAndPort(host, port);
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host, Port port) {
-		return new Authority(userInfo, host, port);
+		if (userInfo == null) {
+			return HostAndPort(host, port);
+		} else {
+			return new Authority(userInfo, host, port);
+		}
 	}
 
 	private final UserInfo userInfo;
 	private final Host host;
 	private final Port port;
 
-	private Authority(UserInfo userInfo, Host host, Port port) {
+	Authority(UserInfo userInfo, Host host, Port port) {
 		super();
 		this.userInfo = userInfo;
 		this.host = host;
@@ -79,7 +83,7 @@ public class Authority implements Immutable {
 
 	public String toString(Scheme scheme) {
 		String userInfoAndHost = buildUserInfoAndHost();
-		if (port == null || scheme.isDefaultPort(port)) {
+		if (scheme.isDefaultPort(port)) {
 			return userInfoAndHost;
 		} else {
 			return userInfoAndHost + ":" + port;
