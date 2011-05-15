@@ -22,42 +22,40 @@ public class Authority implements Immutable {
 		}
 		UserInfo userInfo = (userInfoStr == null) ? null : UserInfo(userInfoStr);
 		HostAndPort hostAndPort = HostAndPort.HostAndPort(hostAndPortStr);
-		if (userInfo == null) {
-			return hostAndPort;
-		} else {
-			return new Authority(userInfo, hostAndPort.getHost(), hostAndPort.getPort());
-		}
+		return Authority(userInfo, hostAndPort);
 	}
 
-	public static HostAndPort Authority(Host host) {
-		return HostAndPort(host);
+	public static Authority Authority(Host host) {
+		return Authority(host, null);
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host) {
 		return Authority(userInfo, host, null);
 	}
 
-	public static HostAndPort Authority(Host host, Port port) {
-		return HostAndPort(host, port);
+	public static Authority Authority(Host host, Port port) {
+		return Authority(null, host, port);
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host, Port port) {
-		if (userInfo == null) {
-			return HostAndPort(host, port);
-		} else {
-			return new Authority(userInfo, host, port);
-		}
+		return Authority(userInfo, HostAndPort(host, port));
+	}
+
+	public static Authority Authority(HostAndPort hostAndPort) {
+		return Authority(null, hostAndPort);
+	}
+
+	public static Authority Authority(UserInfo userInfo, HostAndPort hostAndPort) {
+		return new Authority(userInfo, hostAndPort);
 	}
 
 	private final UserInfo userInfo;
-	private final Host host;
-	private final Port port;
+	private final HostAndPort hostAndPort;
 
-	Authority(UserInfo userInfo, Host host, Port port) {
+	Authority(UserInfo userInfo, HostAndPort hostAndPort) {
 		super();
 		this.userInfo = userInfo;
-		this.host = host;
-		this.port = port;
+		this.hostAndPort = hostAndPort;
 	}
 
 	public UserInfo getUserInfo() {
@@ -65,11 +63,11 @@ public class Authority implements Immutable {
 	}
 
 	public Host getHost() {
-		return host;
+		return hostAndPort.getHost();
 	}
 
 	public Port getPort() {
-		return port;
+		return hostAndPort.getPort();
 	}
 
 	@Override public Authority toImmutable() {
@@ -77,21 +75,17 @@ public class Authority implements Immutable {
 	}
 
 	@Override public String toString() {
-		String userInfoAndHost = buildUserInfoAndHost();
-		return (port == null) ? userInfoAndHost : userInfoAndHost + ":" + port;
+		String hostAndPortStr = hostAndPort.toString();
+		return toString(hostAndPortStr);
 	}
 
 	public String toString(Scheme scheme) {
-		String userInfoAndHost = buildUserInfoAndHost();
-		if (scheme.isDefaultPort(port)) {
-			return userInfoAndHost;
-		} else {
-			return userInfoAndHost + ":" + port;
-		}
+		String hostAndPortStr = hostAndPort.toString(scheme);
+		return toString(hostAndPortStr);
 	}
 
-	private String buildUserInfoAndHost() {
-		return (userInfo == null) ? host.toString() : userInfo + "@" + host;
+	private String toString(String hostAndPortStr) {
+		return (userInfo == null) ? hostAndPortStr : userInfo + "@" + hostAndPort;
 	}
 
 	@Override
@@ -102,8 +96,7 @@ public class Authority implements Immutable {
 		Authority authority = (Authority) o;
 
 		if (userInfo != null ? !userInfo.equals(authority.userInfo) : authority.userInfo != null) return false;
-		if (!host.equals(authority.host)) return false;
-		if (port != null ? !port.equals(authority.port) : authority.port != null) return false;
+		if (!hostAndPort.equals(authority.hostAndPort)) return false;
 
 		return true;
 	}
@@ -111,8 +104,7 @@ public class Authority implements Immutable {
 	@Override
 	public int hashCode() {
 		int result = userInfo != null ? userInfo.hashCode() : 0;
-		result = 31 * result + host.hashCode();
-		result = 31 * result + (port != null ? port.hashCode() : 0);
+		result = 31 * result + hostAndPort.hashCode();
 		return result;
 	}
 }
