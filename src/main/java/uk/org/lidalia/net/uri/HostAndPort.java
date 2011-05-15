@@ -5,6 +5,8 @@ import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.net.Host;
 import uk.org.lidalia.net.Port;
 
+import static uk.org.lidalia.net.uri.Authority.Authority;
+
 public class HostAndPort implements Immutable {
 	
 	public static HostAndPort HostAndPort(Host host) {
@@ -53,6 +55,10 @@ public class HostAndPort implements Immutable {
 		} else {
 			return host + ":" + port;
 		}
+	}
+
+	public Authority toAuthority() {
+		return Authority(this);
 	}
 
 	@Override

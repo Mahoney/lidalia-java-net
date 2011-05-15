@@ -62,6 +62,10 @@ public class Authority implements Immutable {
 		return userInfo;
 	}
 
+	public HostAndPort getHostAndPort() {
+		return hostAndPort;
+	}
+
 	public Host getHost() {
 		return hostAndPort.getHost();
 	}
