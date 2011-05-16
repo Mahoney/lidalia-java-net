@@ -1,13 +1,15 @@
 package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
+import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
+import uk.org.lidalia.lang.RichObject;
 import uk.org.lidalia.net.Host;
 import uk.org.lidalia.net.Port;
 
 import static uk.org.lidalia.net.uri.Authority.Authority;
 
-public class HostAndPort implements Immutable {
+public class HostAndPort extends RichObject implements Immutable {
 	
 	public static HostAndPort HostAndPort(Host host) {
 		return new HostAndPort(host, null);
@@ -25,8 +27,8 @@ public class HostAndPort implements Immutable {
 		return new HostAndPort(host, port);
 	}
 
-	private Host host;
-	private Port port;
+	@Identity	private Host host;
+	@Identity private Port port;
 
 	HostAndPort(Host host, Port port) {
 		this.host = host;
@@ -59,25 +61,5 @@ public class HostAndPort implements Immutable {
 
 	public Authority toAuthority() {
 		return Authority(this);
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		HostAndPort hostAndPort = (HostAndPort) o;
-
-		if (!this.host.equals(hostAndPort.host)) return false;
-		if (port != null ? !port.equals(hostAndPort.port) : hostAndPort.port != null) return false;
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = host.hashCode();
-		result = 31 * result + (port != null ? port.hashCode() : 0);
-		return result;
 	}
 }

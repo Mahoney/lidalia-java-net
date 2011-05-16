@@ -1,12 +1,14 @@
 package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
+import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
+import uk.org.lidalia.lang.RichObject;
 
 import static uk.org.lidalia.net.uri.Authority.Authority;
 import static uk.org.lidalia.net.uri.Path.Path;
 
-public class HierarchicalPart implements Immutable {
+public class HierarchicalPart extends RichObject implements Immutable {
 
 	public static HierarchicalPart HierarchicalPart(String hierarchicalPart) {
 		Authority authority;
@@ -31,8 +33,8 @@ public class HierarchicalPart implements Immutable {
 		return new HierarchicalPart(null, path);
 	}
 
-	private final Authority authority;
-	private final Path path;
+	@Identity private final Authority authority;
+	@Identity private final Path path;
 
 	private HierarchicalPart(Authority authority, Path path) {
 		super();
@@ -62,24 +64,6 @@ public class HierarchicalPart implements Immutable {
 		} else {
 			return path.toString();
 		}
-	}
-
-	@Override public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		HierarchicalPart that = (HierarchicalPart) o;
-
-		if (authority != null ? !authority.equals(that.authority) : that.authority != null) return false;
-		if (!path.equals(that.path)) return false;
-
-		return true;
-	}
-
-	@Override public int hashCode() {
-		int result = authority != null ? authority.hashCode() : 0;
-		result = 31 * result + path.hashCode();
-		return result;
 	}
 
 	@Override public HierarchicalPart toImmutable() {

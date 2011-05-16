@@ -1,14 +1,16 @@
 package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
+import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
+import uk.org.lidalia.lang.RichObject;
 import uk.org.lidalia.net.Host;
 import uk.org.lidalia.net.Port;
 
 import static uk.org.lidalia.net.uri.UserInfo.UserInfo;
 import static uk.org.lidalia.net.uri.HostAndPort.HostAndPort;
 
-public class Authority implements Immutable {
+public class Authority extends RichObject implements Immutable {
 
 	public static Authority Authority(String authority) {
 		String userInfoStr;
@@ -49,8 +51,8 @@ public class Authority implements Immutable {
 		return new Authority(userInfo, hostAndPort);
 	}
 
-	private final UserInfo userInfo;
-	private final HostAndPort hostAndPort;
+	@Identity private final UserInfo userInfo;
+	@Identity private final HostAndPort hostAndPort;
 
 	Authority(UserInfo userInfo, HostAndPort hostAndPort) {
 		super();
@@ -90,25 +92,5 @@ public class Authority implements Immutable {
 
 	private String toString(String hostAndPortStr) {
 		return (userInfo == null) ? hostAndPortStr : userInfo + "@" + hostAndPort;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Authority authority = (Authority) o;
-
-		if (userInfo != null ? !userInfo.equals(authority.userInfo) : authority.userInfo != null) return false;
-		if (!hostAndPort.equals(authority.hostAndPort)) return false;
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = userInfo != null ? userInfo.hashCode() : 0;
-		result = 31 * result + hostAndPort.hashCode();
-		return result;
 	}
 }
