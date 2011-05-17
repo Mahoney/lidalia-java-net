@@ -3,6 +3,7 @@ package uk.org.lidalia.net.uri;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import uk.org.lidalia.lang.Immutable;
+import uk.org.lidalia.lang.RichObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,7 +13,7 @@ import static uk.org.lidalia.net.uri.HierarchicalPart.HierarchicalPart;
 import static uk.org.lidalia.net.uri.Query.Query;
 import static uk.org.lidalia.net.uri.Scheme.Scheme;
 
-public class Uri implements Immutable {
+public class Uri extends RichObject implements Immutable {
 
 	public static Uri Uri(String uri) {
 		Scheme scheme = Scheme(StringUtils.substringBefore(uri, ":"));
@@ -114,29 +115,5 @@ public class Uri implements Immutable {
 		String baseUri =  scheme + ":" + hierarchicalPartStr;
 		String uriWithQuery = (query == null) ? baseUri : baseUri + "?" + query;
 		return (fragment == null) ? uriWithQuery : uriWithQuery + "#" + fragment;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Uri uri = (Uri) o;
-
-		if (!scheme.equals(uri.scheme)) return false;
-		if (!hierarchicalPart.equals(uri.hierarchicalPart)) return false;
-		if (query != null ? !query.equals(uri.query) : uri.query != null) return false;
-		if (fragment != null ? !fragment.equals(uri.fragment) : uri.fragment != null) return false;
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = scheme.hashCode();
-		result = 31 * result + hierarchicalPart.hashCode();
-		result = 31 * result + (query != null ? query.hashCode() : 0);
-		result = 31 * result + (fragment != null ? fragment.hashCode() : 0);
-		return result;
 	}
 }

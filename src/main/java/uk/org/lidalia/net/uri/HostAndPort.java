@@ -30,7 +30,7 @@ public class HostAndPort extends RichObject implements Immutable {
 	@Identity	private Host host;
 	@Identity private Port port;
 
-	HostAndPort(Host host, Port port) {
+	private HostAndPort(Host host, Port port) {
 		this.host = host;
 		this.port = port;
 	}
