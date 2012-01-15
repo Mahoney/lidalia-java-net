@@ -1,7 +1,6 @@
 package uk.org.lidalia.net;
 
 import org.junit.Test;
-import uk.org.lidalia.net.uri.HierarchicalPart;
 import uk.org.lidalia.net.uri.Uri;
 
 import static org.junit.Assert.assertEquals;
