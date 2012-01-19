@@ -1,6 +1,10 @@
 package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+
+import com.google.common.base.Optional;
+
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.RichObject;
@@ -12,25 +16,27 @@ import static uk.org.lidalia.net.uri.Authority.Authority;
 public class HostAndPort extends RichObject implements Immutable {
 	
 	public static HostAndPort HostAndPort(Host host) {
-		return new HostAndPort(host, null);
+		return new HostAndPort(host, Optional.<Port>absent());
 	}
 
 	public static HostAndPort HostAndPort(Host host, Port port) {
-		return new HostAndPort(host, port);
+		return new HostAndPort(host, Optional.of(port));
 	}
 
 	public static HostAndPort HostAndPort(String hostAndPort) {
 		String portStr = StringUtils.substringAfterLast(hostAndPort, ":");
-		Port port = (portStr.isEmpty()) ? null : Port.Port(portStr);
+		Optional<Port> port = (portStr.isEmpty()) ? Optional.<Port>absent() : Optional.of(Port.Port(portStr));
 		String hostStr = StringUtils.substringBeforeLast(hostAndPort, ":");
 		Host host = Host.Host(hostStr);
 		return new HostAndPort(host, port);
 	}
 
-	@Identity	private Host host;
-	@Identity private Port port;
+	@Identity private Host host;
+	@Identity private Optional<Port> port;
 
-	private HostAndPort(Host host, Port port) {
+	private HostAndPort(Host host, Optional<Port> port) {
+		Validate.notNull(host);
+		Validate.notNull(port);
 		this.host = host;
 		this.port = port;
 	}
@@ -39,7 +45,7 @@ public class HostAndPort extends RichObject implements Immutable {
 		return host;
 	}
 
-	public Port getPort() {
+	public Optional<Port> getPort() {
 		return port;
 	}
 
@@ -48,18 +54,32 @@ public class HostAndPort extends RichObject implements Immutable {
 	}
 
 	@Override public String toString() {
-		return (port == null) ? host.toString() : host + ":" + port;
+		return (port.isPresent()) ? host + ":" + port.get() : host.toString();
 	}
 
-	public String toString(Scheme scheme) {
-		if (port == null || scheme.isDefaultPort(port)) {
+	String toString(Scheme scheme) {
+		if (!port.isPresent() || scheme.isDefaultPort(port.get())) {
 			return host.toString();
 		} else {
-			return host + ":" + port;
+			return host + ":" + port.get();
 		}
 	}
 
 	public Authority toAuthority() {
 		return Authority(this);
+	}
+
+	boolean equals(HostAndPort other, Scheme scheme) {
+		if (!host.equals(other.host)) return false;
+		Optional<Port> schemeDefaultPort = scheme.getDefaultPort();
+		return (port.or(schemeDefaultPort).equals(other.port.or(schemeDefaultPort)));
+	}
+
+	int hashCode(Scheme scheme) {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + host.hashCode();
+		result = prime * result + port.or(scheme.getDefaultPort()).hashCode();
+		return result;
 	}
 }

@@ -1,12 +1,16 @@
 package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Optional;
+
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.RichObject;
 import uk.org.lidalia.net.Host;
 import uk.org.lidalia.net.Port;
 
+import static com.google.common.base.Optional.of;
 import static uk.org.lidalia.net.uri.UserInfo.UserInfo;
 import static uk.org.lidalia.net.uri.HostAndPort.HostAndPort;
 
@@ -22,21 +26,21 @@ public class Authority extends RichObject implements Immutable {
 			userInfoStr = null;
 			hostAndPortStr = authority;
 		}
-		UserInfo userInfo = (userInfoStr == null) ? null : UserInfo(userInfoStr);
+		Optional<UserInfo> userInfo = (userInfoStr == null) ? Optional.<UserInfo>absent() : of(UserInfo(userInfoStr));
 		HostAndPort hostAndPort = HostAndPort.HostAndPort(hostAndPortStr);
-		return Authority(userInfo, hostAndPort);
+		return new Authority(userInfo, hostAndPort);
 	}
 
 	public static Authority Authority(Host host) {
-		return Authority(host, null);
+		return Authority(HostAndPort(host));
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host) {
-		return Authority(userInfo, host, null);
+		return Authority(userInfo, HostAndPort(host));
 	}
 
 	public static Authority Authority(Host host, Port port) {
-		return Authority(null, host, port);
+		return Authority(Optional.<UserInfo>absent(), host, port);
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host, Port port) {
@@ -44,23 +48,27 @@ public class Authority extends RichObject implements Immutable {
 	}
 
 	public static Authority Authority(HostAndPort hostAndPort) {
-		return Authority(null, hostAndPort);
+		return new Authority(Optional.<UserInfo>absent(), hostAndPort);
 	}
 
 	public static Authority Authority(UserInfo userInfo, HostAndPort hostAndPort) {
-		return new Authority(userInfo, hostAndPort);
+		return new Authority(of(userInfo), hostAndPort);
+	}
+	
+	private static Authority Authority(Optional<UserInfo> userInfo, Host host, Port port) {
+		return new Authority(userInfo, HostAndPort(host, port));
 	}
 
-	@Identity private final UserInfo userInfo;
+	@Identity private final Optional<UserInfo> userInfo;
 	@Identity private final HostAndPort hostAndPort;
 
-	Authority(UserInfo userInfo, HostAndPort hostAndPort) {
+	Authority(Optional<UserInfo> userInfo, HostAndPort hostAndPort) {
 		super();
 		this.userInfo = userInfo;
 		this.hostAndPort = hostAndPort;
 	}
 
-	public UserInfo getUserInfo() {
+	public Optional<UserInfo> getUserInfo() {
 		return userInfo;
 	}
 
@@ -72,7 +80,7 @@ public class Authority extends RichObject implements Immutable {
 		return hostAndPort.getHost();
 	}
 
-	public Port getPort() {
+	public Optional<Port> getPort() {
 		return hostAndPort.getPort();
 	}
 
@@ -91,6 +99,18 @@ public class Authority extends RichObject implements Immutable {
 	}
 
 	private String toString(String hostAndPortStr) {
-		return (userInfo == null) ? hostAndPortStr : userInfo + "@" + hostAndPort;
+		return (userInfo.isPresent()) ? userInfo.get() + "@" + hostAndPortStr : hostAndPortStr;
+	}
+
+	boolean equals(Authority other, Scheme scheme) {
+		return userInfo.equals(other.userInfo) && hostAndPort.equals(other.hostAndPort, scheme);
+	}
+
+	int hashCode(Scheme scheme) {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + userInfo.hashCode();
+		result = prime * result + hostAndPort.hashCode(scheme);
+		return result;
 	}
 }

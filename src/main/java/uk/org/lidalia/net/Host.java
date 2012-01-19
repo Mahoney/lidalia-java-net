@@ -8,7 +8,6 @@ public class Host extends WrappedString {
 		return new Host(hostStr);
 	}
 
-
 	Host(String wrappedValue) {
 		super(wrappedValue);
 	}

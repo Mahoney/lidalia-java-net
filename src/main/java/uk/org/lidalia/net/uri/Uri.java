@@ -2,18 +2,21 @@ package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+
+import com.google.common.base.Optional;
+
 import uk.org.lidalia.lang.Immutable;
-import uk.org.lidalia.lang.RichObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static com.google.common.base.Optional.of;
 import static uk.org.lidalia.net.uri.Fragment.Fragment;
 import static uk.org.lidalia.net.uri.HierarchicalPart.HierarchicalPart;
 import static uk.org.lidalia.net.uri.Query.Query;
 import static uk.org.lidalia.net.uri.Scheme.Scheme;
 
-public class Uri extends RichObject implements Immutable {
+public class Uri implements Immutable {
 
 	public static Uri Uri(String uri) {
 		Scheme scheme = Scheme(StringUtils.substringBefore(uri, ":"));
@@ -25,42 +28,41 @@ public class Uri extends RichObject implements Immutable {
 		String queryStr = StringUtils.substringAfter(hierarchicalPartAndQuery, "?");
 
 		HierarchicalPart hierarchicalPart = HierarchicalPart(hierarchicalPartStr);
-		Query query = (queryStr.isEmpty() ? null : Query(queryStr));
-		Fragment fragment = (fragmentStr.isEmpty() ? null : Fragment(fragmentStr));
-		return Uri(scheme, hierarchicalPart, query, fragment);
-	}
-
-	public static Uri Uri(String schemeStr, String hierarchicalPartStr, String queryStr, String fragmentStr) {
-		return new Uri(Scheme(schemeStr), HierarchicalPart(hierarchicalPartStr), Query.Query(queryStr), Fragment(fragmentStr));
+		Optional<Query> query = (queryStr.isEmpty() ? Optional.<Query>absent() : of(Query(queryStr)));
+		Optional<Fragment> fragment = (fragmentStr.isEmpty() ? Optional.<Fragment>absent() : of(Fragment(fragmentStr)));
+		return new Uri(scheme, hierarchicalPart, query, fragment);
 	}
 
 	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart) {
-		return new Uri(scheme, hierarchicalPart, null, null);
+		return new Uri(scheme, hierarchicalPart, Optional.<Query>absent(), Optional.<Fragment>absent());
 	}
 
 	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query) {
-		return new Uri(scheme, hierarchicalPart, query, null);
+		return new Uri(scheme, hierarchicalPart, of(query), Optional.<Fragment>absent());
 	}
 
 	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Fragment fragment) {
-		return new Uri(scheme, hierarchicalPart, null, fragment);
+		return new Uri(scheme, hierarchicalPart, Optional.<Query>absent(), of(fragment));
 	}
 
 	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query, Fragment fragment) {
-		return new Uri(scheme, hierarchicalPart, query, fragment);
+		return new Uri(scheme, hierarchicalPart, of(query), of(fragment));
 	}
+
 	public static Uri Uri(URI javaUri) {
 		return Uri(javaUri.toString());
 	}
 
 	private final Scheme scheme;
 	private final HierarchicalPart hierarchicalPart;
-	private final Query query;
-	private final Fragment fragment;
+	private final Optional<Query> query;
+	private final Optional<Fragment> fragment;
 
-	private Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query, Fragment fragment) {
+	private Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Optional<Query> query, Optional<Fragment> fragment) {
 		Validate.notNull(scheme, "scheme is null");
 		Validate.notNull(hierarchicalPart, "hierarchical part is null");
+		Validate.notNull(query, "query is null");
+		Validate.notNull(fragment, "fragment is null");
 		this.scheme = scheme;
 		this.hierarchicalPart = hierarchicalPart;
 		this.query = query;
@@ -75,15 +77,15 @@ public class Uri extends RichObject implements Immutable {
 		return hierarchicalPart;
 	}
 
-	public Query getQuery() {
+	public Optional<Query> getQuery() {
 		return query;
 	}
 
-	public Fragment getFragment() {
+	public Optional<Fragment> getFragment() {
 		return fragment;
 	}
 
-	public Authority getAuthority() {
+	public Optional<Authority> getAuthority() {
 		return hierarchicalPart.getAuthority();
 	}
 
@@ -113,7 +115,35 @@ public class Uri extends RichObject implements Immutable {
 
 	private String toString(String hierarchicalPartStr) {
 		String baseUri =  scheme + ":" + hierarchicalPartStr;
-		String uriWithQuery = (query == null) ? baseUri : baseUri + "?" + query;
-		return (fragment == null) ? uriWithQuery : uriWithQuery + "#" + fragment;
+		String uriWithQuery = (query.isPresent()) ? baseUri + "?" + query.get() : baseUri;
+		return (fragment.isPresent()) ? uriWithQuery + "#" + fragment.get() : uriWithQuery;
+	}
+	
+	@Override public final boolean equals(Object other) {
+		if (other == this) {
+			return true;
+		}
+		if (other == null) {
+			return false;
+		}
+		if (!other.getClass().equals(Uri.class)) {
+			return false;
+		}
+		Uri otherUri = (Uri) other;
+		return scheme.equals(otherUri.scheme)
+				&& query.equals(otherUri.query)
+				&& fragment.equals(otherUri.fragment)
+				&& hierarchicalPart.equals(otherUri.hierarchicalPart, scheme);
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + fragment.hashCode();
+		result = prime * result + hierarchicalPart.hashCode(scheme);
+		result = prime * result + query.hashCode();
+		result = prime * result + scheme.hashCode();
+		return result;
 	}
 }

@@ -1,10 +1,13 @@
 package uk.org.lidalia.net;
 
 import org.junit.Test;
+
 import uk.org.lidalia.net.uri.Uri;
 
+import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Optional.of;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static uk.org.lidalia.net.uri.Fragment.Fragment;
 import static uk.org.lidalia.net.uri.HierarchicalPart.HierarchicalPart;
 import static uk.org.lidalia.net.uri.Query.Query;
@@ -26,8 +29,8 @@ public class UriTests {
 		Uri uri = Uri(uriStr);
 		assertEquals(Scheme(scheme), uri.getScheme());
 		assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
-		assertNull(uri.getQuery());
-		assertNull(uri.getFragment());
+		assertEquals(absent(), uri.getQuery());
+		assertEquals(absent(), uri.getFragment());
 		assertEquals(uriStr, uri.toString());
 	}
 
@@ -35,8 +38,8 @@ public class UriTests {
 		Uri uri = Uri(uriWithQuery);
 		assertEquals(Scheme(scheme), uri.getScheme());
 		assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
-		assertEquals(Query(query), uri.getQuery());
-		assertNull(uri.getFragment());
+		assertEquals(of(Query(query)), uri.getQuery());
+		assertEquals(absent(), uri.getFragment());
 		assertEquals(uriWithQuery, uri.toString());
 	}
 	
@@ -44,8 +47,8 @@ public class UriTests {
 		Uri uri = Uri(uriWithFragment);
 		assertEquals(Scheme(scheme), uri.getScheme());
 		assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
-		assertNull(uri.getQuery());
-		assertEquals(Fragment(fragment), uri.getFragment());
+		assertEquals(absent(), uri.getQuery());
+		assertEquals(of(Fragment(fragment)), uri.getFragment());
 		assertEquals(uriWithFragment, uri.toString());
 	}
 
@@ -53,13 +56,64 @@ public class UriTests {
 		Uri uri = Uri(uriWithQueryAndFragment);
 		assertEquals(Scheme(scheme), uri.getScheme());
 		assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
-		assertEquals(Query(query), uri.getQuery());
-		assertEquals(Fragment(fragment), uri.getFragment());
+		assertEquals(of(Query(query)), uri.getQuery());
+		assertEquals(of(Fragment(fragment)), uri.getFragment());
 		assertEquals(uriWithQueryAndFragment, uri.toString());
 	}
 	
 	@Test public void toStringOmitsDefaultPortForScheme() {
 		Uri uri = Uri("http://example.com:80/over/there");
 		assertEquals("http://example.com/over/there", uri.toString());
+	}
+	
+	@Test public void equalsForEqualUrisWithDefaultPortForOneScheme() {
+		Uri uri1 = Uri("http://example.com:80/over/there");
+		Uri uri2 = Uri("http://example.com/over/there");
+		
+		assertEquals(uri1, uri2);
+		assertEquals(uri2, uri1);
+	}
+	
+	@Test public void equalsForUnequalUrisWithDefaultPortForOneScheme() {
+		Uri uri1 = Uri("http://example.com/over/there");
+		Uri uri2 = Uri("http://example.com:443/over/there");
+		
+		assertFalse(uri1.equals(uri2));
+		assertFalse(uri2.equals(uri1));
+	}
+	
+	@Test public void equalsWorksWithPorts() {
+		Uri uri1 = Uri("http://example.com:80/over/there");
+		Uri uri2 = Uri("http://example.com:80/over/there");
+		
+		assertEquals(uri1, uri2);
+	}
+	
+	@Test public void equalsWorksWithoutPorts() {
+		Uri uri1 = Uri("http://example.com/over/there");
+		Uri uri2 = Uri("http://example.com/over/there");
+		
+		assertEquals(uri1, uri2);
+	}
+	
+	@Test public void hashCodeForEqualUrisWithDefaultPortForOneScheme() {
+		Uri uri1 = Uri("http://example.com:80/over/there");
+		Uri uri2 = Uri("http://example.com/over/there");
+		
+		assertEquals(uri1.hashCode(), uri2.hashCode());
+	}
+	
+	@Test public void hashCodeForEqualUris() {
+		Uri uri1 = Uri("http://example.com/over/there");
+		Uri uri2 = Uri("http://example.com/over/there");
+		
+		assertEquals(uri1.hashCode(), uri2.hashCode());
+	}
+	
+	@Test public void hashCodeForUnequalUris() {
+		Uri uri1 = Uri("http://example.com:443/over/there");
+		Uri uri2 = Uri("http://example.com/over/there");
+		
+		assertFalse(uri1.hashCode() == uri2.hashCode());
 	}
 }

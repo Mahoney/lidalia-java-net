@@ -1,6 +1,10 @@
 package uk.org.lidalia.net.uri;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+
+import com.google.common.base.Optional;
+
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.RichObject;
@@ -22,27 +26,29 @@ public class HierarchicalPart extends RichObject implements Immutable {
 			authority = null;
 			path = Path(hierarchicalPart);
 		}
-		return new HierarchicalPart(authority, path);
+		return new HierarchicalPart(Optional.fromNullable(authority), path);
 	}
 
 	public static HierarchicalPart HierarchicalPart(Authority authority, Path path) {
-		return new HierarchicalPart(authority, path);
+		return new HierarchicalPart(Optional.of(authority), path);
 	}
 
 	public static HierarchicalPart HierarchicalPart(Path path) {
-		return new HierarchicalPart(null, path);
+		return new HierarchicalPart(Optional.<Authority>absent(), path);
 	}
 
-	@Identity private final Authority authority;
+	@Identity private final Optional<Authority> authority;
 	@Identity private final Path path;
 
-	private HierarchicalPart(Authority authority, Path path) {
+	private HierarchicalPart(Optional<Authority> authority, Path path) {
 		super();
+		Validate.notNull(authority);
+		Validate.notNull(path);
 		this.authority = authority;
 		this.path = path;
 	}
 
-	public Authority getAuthority() {
+	public Optional<Authority> getAuthority() {
 		return authority;
 	}
 
@@ -51,16 +57,16 @@ public class HierarchicalPart extends RichObject implements Immutable {
 	}
 
 	@Override public String toString() {
-		if (authority != null) {
-			return "//" + authority.toString() + path.toString();
+		if (authority.isPresent()) {
+			return "//" + authority.get().toString() + path.toString();
 		} else {
 			return path.toString();
 		}
 	}
 
 	public String toString(Scheme scheme) {
-		if (authority != null) {
-			return "//" + authority.toString(scheme) + path.toString();
+		if (authority.isPresent()) {
+			return "//" + authority.get().toString(scheme) + path.toString();
 		} else {
 			return path.toString();
 		}
@@ -68,5 +74,22 @@ public class HierarchicalPart extends RichObject implements Immutable {
 
 	@Override public HierarchicalPart toImmutable() {
 		return this;
+	}
+
+	boolean equals(HierarchicalPart other, Scheme scheme) {
+		if (!path.equals(other.path)) return false;
+		if (authority.isPresent()) {
+			return other.authority.isPresent() && authority.get().equals(other.authority.get(), scheme);
+		} else {
+			return !other.authority.isPresent();
+		}
+	}
+
+	int hashCode(Scheme scheme) {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (authority.isPresent() ? authority.get().hashCode(scheme) : authority.hashCode());
+		result = prime * result + path.hashCode();
+		return result;
 	}
 }
