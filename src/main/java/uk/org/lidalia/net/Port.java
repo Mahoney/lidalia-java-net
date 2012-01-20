@@ -1,6 +1,6 @@
 package uk.org.lidalia.net;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.WrappedValue;

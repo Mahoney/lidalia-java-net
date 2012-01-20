@@ -10,7 +10,7 @@ import uk.org.lidalia.net.uri.Scheme;
 
 public class SchemeTests {
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=NullPointerException.class)
 	public void schemeCannotBeNull() {
 		Scheme(null);
 	}
