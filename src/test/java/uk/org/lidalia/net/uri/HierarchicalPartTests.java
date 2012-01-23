@@ -1,4 +1,4 @@
-package uk.org.lidalia.net;
+package uk.org.lidalia.net.uri;
 
 import org.junit.Test;
 

@@ -16,7 +16,7 @@ import uk.org.lidalia.net.Port;
 
 public final class Scheme extends WrappedString {
 	
-	private static final String VALID_SCHEME_REGEX = "[a-zA-Z][a-zA-Z0-9$_@.&+\\-]*";
+	private static final String VALID_SCHEME_REGEX = "[a-zA-Z][a-zA-Z0-9+\\-\\.]*";
 	private static final Pattern VALID_SCHEME_PATTERN = Pattern.compile(VALID_SCHEME_REGEX);
 
 	private static final ConcurrentMap<String, Scheme> schemes = new ConcurrentHashMap<String, Scheme>();
@@ -37,7 +37,7 @@ public final class Scheme extends WrappedString {
 	}
 	
 	private static Scheme register(String schemeName, Optional<Port> defaultPort) {
-		return Maps.putIfAbsentReturningValue(schemes, schemeName, new Scheme(schemeName, defaultPort));
+		return Maps.putIfAbsentReturningValue(schemes, schemeName.toLowerCase(), new Scheme(schemeName, defaultPort));
 	}
 
 	private final Optional<Port> defaultPort;
@@ -52,6 +52,7 @@ public final class Scheme extends WrappedString {
 
 	private static Scheme Scheme(String schemeName, Optional<Port> defaultPort) {
 		Validate.notNull(schemeName);
+		schemeName = schemeName.toLowerCase();
 		Scheme knownScheme = schemes.get(schemeName);
 		if (knownScheme == null) {
 			return new Scheme(schemeName, defaultPort);

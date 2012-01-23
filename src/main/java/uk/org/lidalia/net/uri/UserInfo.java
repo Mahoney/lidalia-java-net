@@ -1,40 +1,55 @@
 package uk.org.lidalia.net.uri;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
+import uk.org.lidalia.lang.Collections3;
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.RichObject;
 
 import static com.google.common.base.Optional.of;
-import static uk.org.lidalia.net.uri.Password.Password;
-import static uk.org.lidalia.net.uri.UserId.UserId;
+import static java.util.Arrays.asList;
+import static uk.org.lidalia.net.uri.UriText.UriText;
 
-public class UserInfo extends RichObject implements Immutable {
+public class UserInfo extends RichObject implements Iterable<UriText>, Immutable {
 
 	public static UserInfo UserInfo(String userInfo) {
-		UserId userId = UserId(StringUtils.substringBefore(userInfo, ":"));
-		String passwordStr = StringUtils.substringAfter(userInfo, ":");
-		return new UserInfo(userId, passwordStr.isEmpty() ? Optional.<Password>absent() : of(Password(passwordStr)));
+		if (userInfo.length() == 0) return UserInfo();
+		List<String> elements = asList(userInfo.split(":"));
+		List<UriText> userInfoElements = Lists.transform(elements, new Function<String, UriText>() {
+			@Override
+			public UriText apply(String input) {
+				return UriText(input);
+			}
+		});
+		return new UserInfo(userInfoElements);
 	}
 	
-	@Identity private final UserId userId;
-	@Identity private final Optional<Password> password;
+	public static UserInfo UserInfo(UriText... userInfoElements) {
+		return new UserInfo(asList(userInfoElements));
+	}
 
-	private UserInfo(UserId userId, Optional<Password> password) {
+	public static UserInfo UserInfo(List<UriText> userInfoElements) {
+		return new UserInfo(userInfoElements);
+	}
+
+	@Identity private final List<UriText> userInfoElements;
+
+	private UserInfo(List<UriText> userInfoElements) {
 		super();
-		this.userId = userId;
-		this.password = password;
+		this.userInfoElements = Collections.unmodifiableList(userInfoElements);
 	}
 
-	public UserId getUserId() {
-		return userId;
-	}
-
-	public Optional<Password> getPassword() {
-		return password;
+	public Optional<UriText> getUserId() {
+		return userInfoElements.size() > 0 ?
+				of(userInfoElements.get(0))
+				: Optional.<UriText>absent();
 	}
 
 	@Override
@@ -44,6 +59,23 @@ public class UserInfo extends RichObject implements Immutable {
 
 	@Override
 	public String toString() {
-		return userId + (password.isPresent() ? ":" + password.get() : "");
+		return Collections3.toString(userInfoElements, "", ":", "");
+	}
+	
+	@Override
+	public Iterator<UriText> iterator() {
+		return userInfoElements.iterator();
+	}
+	
+	public int size() {
+		return userInfoElements.size();
+	}
+	
+	public UriText get(int index) {
+		return userInfoElements.get(index);
+	}
+	
+	public boolean hasElements() {
+		return userInfoElements.size() > 0;
 	}
 }

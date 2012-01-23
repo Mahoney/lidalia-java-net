@@ -23,10 +23,10 @@ public class Authority extends RichObject implements Immutable {
 			userInfoStr = StringUtils.substringBefore(authority, "@");
 			hostAndPortStr = StringUtils.substringAfter(authority, "@");
 		} else {
-			userInfoStr = null;
+			userInfoStr = "";
 			hostAndPortStr = authority;
 		}
-		Optional<UserInfo> userInfo = (userInfoStr == null) ? Optional.<UserInfo>absent() : of(UserInfo(userInfoStr));
+		UserInfo userInfo = UserInfo(userInfoStr);
 		HostAndPort hostAndPort = HostAndPort.HostAndPort(hostAndPortStr);
 		return new Authority(userInfo, hostAndPort);
 	}
@@ -40,7 +40,7 @@ public class Authority extends RichObject implements Immutable {
 	}
 
 	public static Authority Authority(Host host, Port port) {
-		return Authority(Optional.<UserInfo>absent(), host, port);
+		return Authority(UserInfo(), host, port);
 	}
 
 	public static Authority Authority(UserInfo userInfo, Host host, Port port) {
@@ -48,27 +48,23 @@ public class Authority extends RichObject implements Immutable {
 	}
 
 	public static Authority Authority(HostAndPort hostAndPort) {
-		return new Authority(Optional.<UserInfo>absent(), hostAndPort);
+		return new Authority(UserInfo(), hostAndPort);
 	}
 
 	public static Authority Authority(UserInfo userInfo, HostAndPort hostAndPort) {
-		return new Authority(of(userInfo), hostAndPort);
-	}
-	
-	private static Authority Authority(Optional<UserInfo> userInfo, Host host, Port port) {
-		return new Authority(userInfo, HostAndPort(host, port));
+		return new Authority(userInfo, hostAndPort);
 	}
 
-	@Identity private final Optional<UserInfo> userInfo;
+	@Identity private final UserInfo userInfo;
 	@Identity private final HostAndPort hostAndPort;
 
-	Authority(Optional<UserInfo> userInfo, HostAndPort hostAndPort) {
+	Authority(UserInfo userInfo, HostAndPort hostAndPort) {
 		super();
 		this.userInfo = userInfo;
 		this.hostAndPort = hostAndPort;
 	}
 
-	public Optional<UserInfo> getUserInfo() {
+	public UserInfo getUserInfo() {
 		return userInfo;
 	}
 
@@ -99,7 +95,7 @@ public class Authority extends RichObject implements Immutable {
 	}
 
 	private String toString(String hostAndPortStr) {
-		return (userInfo.isPresent()) ? userInfo.get() + "@" + hostAndPortStr : hostAndPortStr;
+		return userInfo.hasElements() ? userInfo + "@" + hostAndPortStr : hostAndPortStr;
 	}
 
 	boolean equals(Authority other, Scheme scheme) {

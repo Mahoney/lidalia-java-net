@@ -1,4 +1,4 @@
-package uk.org.lidalia.net;
+package uk.org.lidalia.net.uri;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
