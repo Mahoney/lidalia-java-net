@@ -14,33 +14,29 @@ public class SchemeTests {
 	public void schemeCannotBeNull() {
 		Scheme(null);
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void schemeCannotStartWithNumericCharacter() {
 		Scheme("0");
 	}
-	
+
 	@Test
 	public void schemeCanBeSingleAlphabetCharacter() {
 		Scheme a = Scheme("a");
 		assertEquals("a", a.toString());
 		Scheme A = Scheme("A");
-		assertEquals("A", A.toString());
-		Scheme o = Scheme("o");
-		assertEquals("o", o.toString());
-		Scheme O = Scheme("O");
-		assertEquals("O", O.toString());
+		assertEquals("a", A.toString());
 		Scheme z = Scheme("z");
 		assertEquals("z", z.toString());
 		Scheme Z = Scheme("Z");
-		assertEquals("Z", Z.toString());
+		assertEquals("z", Z.toString());
 	}
-	
+
 	@Test
 	public void schemeCanContainAllLegalCharacters() {
-		String legal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$_@.&+-";
+		String legal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.+-";
 		Scheme scheme = Scheme(legal);
-		assertEquals(legal, scheme.toString());
+		assertEquals(legal.toLowerCase(), scheme.toString());
 	}
 
 	@Test(expected=IllegalArgumentException.class)
