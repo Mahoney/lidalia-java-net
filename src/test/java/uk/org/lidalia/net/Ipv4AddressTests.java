@@ -1,19 +1,8 @@
 package uk.org.lidalia.net;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import org.junit.Test;
 
-import com.google.common.base.Function;
-import com.google.common.collect.DiscreteDomains;
-import com.google.common.collect.Ranges;
-
-import static com.google.common.collect.Iterables.transform;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.sort;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
