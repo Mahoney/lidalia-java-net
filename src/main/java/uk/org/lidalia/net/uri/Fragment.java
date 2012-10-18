@@ -4,15 +4,15 @@ import uk.org.lidalia.lang.WrappedString;
 
 public class Fragment extends WrappedString {
 
-	public static Fragment Fragment(String fragment) {
-		return new Fragment(fragment);
-	}
+    public static Fragment Fragment(String fragment) {
+        return new Fragment(fragment);
+    }
 
-	private Fragment(String wrappedValue) {
-		super(wrappedValue);
-	}
+    private Fragment(String wrappedValue) {
+        super(wrappedValue);
+    }
 
-	@Override public Fragment toImmutable() {
-		return this;
-	}
+    @Override public Fragment toImmutable() {
+        return this;
+    }
 }

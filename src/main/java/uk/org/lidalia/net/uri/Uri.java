@@ -18,132 +18,132 @@ import static uk.org.lidalia.net.uri.Scheme.Scheme;
 
 public class Uri implements Immutable {
 
-	public static Uri Uri(String uri) {
-		Scheme scheme = Scheme(StringUtils.substringBefore(uri, ":"));
-		String withoutScheme = StringUtils.substringAfter(uri, ":");
+    public static Uri Uri(String uri) {
+        Scheme scheme = Scheme(StringUtils.substringBefore(uri, ":"));
+        String withoutScheme = StringUtils.substringAfter(uri, ":");
 
-		String fragmentStr = StringUtils.substringAfterLast(withoutScheme, "#");
-		String hierarchicalPartAndQuery = StringUtils.substringBeforeLast(withoutScheme, "#");
-		String hierarchicalPartStr = StringUtils.substringBefore(hierarchicalPartAndQuery, "?");
-		String queryStr = StringUtils.substringAfter(hierarchicalPartAndQuery, "?");
+        String fragmentStr = StringUtils.substringAfterLast(withoutScheme, "#");
+        String hierarchicalPartAndQuery = StringUtils.substringBeforeLast(withoutScheme, "#");
+        String hierarchicalPartStr = StringUtils.substringBefore(hierarchicalPartAndQuery, "?");
+        String queryStr = StringUtils.substringAfter(hierarchicalPartAndQuery, "?");
 
-		HierarchicalPart hierarchicalPart = HierarchicalPart(hierarchicalPartStr);
-		Optional<Query> query = (queryStr.isEmpty() ? Optional.<Query>absent() : of(Query(queryStr)));
-		Optional<Fragment> fragment = (fragmentStr.isEmpty() ? Optional.<Fragment>absent() : of(Fragment(fragmentStr)));
-		return new Uri(scheme, hierarchicalPart, query, fragment);
-	}
+        HierarchicalPart hierarchicalPart = HierarchicalPart(hierarchicalPartStr);
+        Optional<Query> query = (queryStr.isEmpty() ? Optional.<Query>absent() : of(Query(queryStr)));
+        Optional<Fragment> fragment = (fragmentStr.isEmpty() ? Optional.<Fragment>absent() : of(Fragment(fragmentStr)));
+        return new Uri(scheme, hierarchicalPart, query, fragment);
+    }
 
-	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart) {
-		return new Uri(scheme, hierarchicalPart, Optional.<Query>absent(), Optional.<Fragment>absent());
-	}
+    public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart) {
+        return new Uri(scheme, hierarchicalPart, Optional.<Query>absent(), Optional.<Fragment>absent());
+    }
 
-	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query) {
-		return new Uri(scheme, hierarchicalPart, of(query), Optional.<Fragment>absent());
-	}
+    public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query) {
+        return new Uri(scheme, hierarchicalPart, of(query), Optional.<Fragment>absent());
+    }
 
-	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Fragment fragment) {
-		return new Uri(scheme, hierarchicalPart, Optional.<Query>absent(), of(fragment));
-	}
+    public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Fragment fragment) {
+        return new Uri(scheme, hierarchicalPart, Optional.<Query>absent(), of(fragment));
+    }
 
-	public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query, Fragment fragment) {
-		return new Uri(scheme, hierarchicalPart, of(query), of(fragment));
-	}
+    public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Query query, Fragment fragment) {
+        return new Uri(scheme, hierarchicalPart, of(query), of(fragment));
+    }
 
-	public static Uri Uri(URI javaUri) {
-		return Uri(javaUri.toString());
-	}
+    public static Uri Uri(URI javaUri) {
+        return Uri(javaUri.toString());
+    }
 
-	private final Scheme scheme;
-	private final HierarchicalPart hierarchicalPart;
-	private final Optional<Query> query;
-	private final Optional<Fragment> fragment;
+    private final Scheme scheme;
+    private final HierarchicalPart hierarchicalPart;
+    private final Optional<Query> query;
+    private final Optional<Fragment> fragment;
 
-	private Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Optional<Query> query, Optional<Fragment> fragment) {
-		Validate.notNull(scheme, "scheme is null");
-		Validate.notNull(hierarchicalPart, "hierarchical part is null");
-		Validate.notNull(query, "query is null");
-		Validate.notNull(fragment, "fragment is null");
-		this.scheme = scheme;
-		this.hierarchicalPart = hierarchicalPart;
-		this.query = query;
-		this.fragment = fragment;
-	}
+    private Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Optional<Query> query, Optional<Fragment> fragment) {
+        Validate.notNull(scheme, "scheme is null");
+        Validate.notNull(hierarchicalPart, "hierarchical part is null");
+        Validate.notNull(query, "query is null");
+        Validate.notNull(fragment, "fragment is null");
+        this.scheme = scheme;
+        this.hierarchicalPart = hierarchicalPart;
+        this.query = query;
+        this.fragment = fragment;
+    }
 
-	public Scheme getScheme() {
-		return scheme;
-	}
+    public Scheme getScheme() {
+        return scheme;
+    }
 
-	public HierarchicalPart getHierarchicalPart() {
-		return hierarchicalPart;
-	}
+    public HierarchicalPart getHierarchicalPart() {
+        return hierarchicalPart;
+    }
 
-	public Optional<Query> getQuery() {
-		return query;
-	}
+    public Optional<Query> getQuery() {
+        return query;
+    }
 
-	public Optional<Fragment> getFragment() {
-		return fragment;
-	}
+    public Optional<Fragment> getFragment() {
+        return fragment;
+    }
 
-	public Optional<Authority> getAuthority() {
-		return hierarchicalPart.getAuthority();
-	}
+    public Optional<Authority> getAuthority() {
+        return hierarchicalPart.getAuthority();
+    }
 
-	public Path getPath() {
-		return hierarchicalPart.getPath();
-	}
+    public Path getPath() {
+        return hierarchicalPart.getPath();
+    }
 
-	public URI toURI() {
-		try {
-			return new URI(scheme.toString(), getAuthority().toString(), getPath().toString(), query.toString(), fragment.toString());
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Uri [" + this + "] should always be a valid java.net.URI", e);
-		}
-	}
+    public URI toURI() {
+        try {
+            return new URI(scheme.toString(), getAuthority().toString(), getPath().toString(), query.toString(), fragment.toString());
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Uri [" + this + "] should always be a valid java.net.URI", e);
+        }
+    }
 
-	@Override public Uri toImmutable() {
-		return this;
-	}
+    @Override public Uri toImmutable() {
+        return this;
+    }
 
-	@Override public String toString() {
-		return toString(hierarchicalPart.toString(scheme));
-	}
+    @Override public String toString() {
+        return toString(hierarchicalPart.toString(scheme));
+    }
 
-	public String toStringMaintainingPort() {
-		return toString(hierarchicalPart.toString());
-	}
+    public String toStringMaintainingPort() {
+        return toString(hierarchicalPart.toString());
+    }
 
-	private String toString(String hierarchicalPartStr) {
-		String baseUri =  scheme + ":" + hierarchicalPartStr;
-		String uriWithQuery = (query.isPresent()) ? baseUri + "?" + query.get() : baseUri;
-		return (fragment.isPresent()) ? uriWithQuery + "#" + fragment.get() : uriWithQuery;
-	}
-	
-	@Override public final boolean equals(Object other) {
-		if (other == this) {
-			return true;
-		}
-		if (other == null) {
-			return false;
-		}
-		if (!other.getClass().equals(Uri.class)) {
-			return false;
-		}
-		Uri otherUri = (Uri) other;
-		return scheme.equals(otherUri.scheme)
-				&& query.equals(otherUri.query)
-				&& fragment.equals(otherUri.fragment)
-				&& hierarchicalPart.equals(otherUri.hierarchicalPart, scheme);
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + fragment.hashCode();
-		result = prime * result + hierarchicalPart.hashCode(scheme);
-		result = prime * result + query.hashCode();
-		result = prime * result + scheme.hashCode();
-		return result;
-	}
+    private String toString(String hierarchicalPartStr) {
+        String baseUri =  scheme + ":" + hierarchicalPartStr;
+        String uriWithQuery = (query.isPresent()) ? baseUri + "?" + query.get() : baseUri;
+        return (fragment.isPresent()) ? uriWithQuery + "#" + fragment.get() : uriWithQuery;
+    }
+
+    @Override public final boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (!other.getClass().equals(Uri.class)) {
+            return false;
+        }
+        Uri otherUri = (Uri) other;
+        return scheme.equals(otherUri.scheme)
+                && query.equals(otherUri.query)
+                && fragment.equals(otherUri.fragment)
+                && hierarchicalPart.equals(otherUri.hierarchicalPart, scheme);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + fragment.hashCode();
+        result = prime * result + hierarchicalPart.hashCode(scheme);
+        result = prime * result + query.hashCode();
+        result = prime * result + scheme.hashCode();
+        return result;
+    }
 }

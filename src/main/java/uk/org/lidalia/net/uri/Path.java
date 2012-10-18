@@ -4,15 +4,15 @@ import uk.org.lidalia.lang.WrappedString;
 
 public class Path extends WrappedString {
 
-	public static Path Path(String path) {
-		return new Path(path);
-	}
+    public static Path Path(String path) {
+        return new Path(path);
+    }
 
-	private Path(String wrappedValue) {
-		super(wrappedValue);
-	}
+    private Path(String wrappedValue) {
+        super(wrappedValue);
+    }
 
-	@Override public Path toImmutable() {
-		return this;
-	}
+    @Override public Path toImmutable() {
+        return this;
+    }
 }

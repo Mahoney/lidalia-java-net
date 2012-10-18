@@ -6,12 +6,12 @@ public class RegisteredName extends Host {
 
     @Identity private final String name;
 
-	public static RegisteredName RegisteredName(String string) {
-		// TODO Auto-generated method stub
-		return new RegisteredName(string);
-	}
+    public static RegisteredName RegisteredName(String string) {
+        // TODO Auto-generated method stub
+        return new RegisteredName(string);
+    }
 
-	RegisteredName(String name) {
+    RegisteredName(String name) {
         this.name = name;
     }
 

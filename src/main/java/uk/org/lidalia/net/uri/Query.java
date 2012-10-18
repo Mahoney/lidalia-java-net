@@ -4,11 +4,11 @@ import uk.org.lidalia.lang.WrappedString;
 
 public class Query extends WrappedString {
 
-	public static Query Query(String query) {
-		return new Query(query);
-	}
+    public static Query Query(String query) {
+        return new Query(query);
+    }
 
-	private Query(String wrappedValue) {
-		super(wrappedValue);
-	}
+    private Query(String wrappedValue) {
+        super(wrappedValue);
+    }
 }

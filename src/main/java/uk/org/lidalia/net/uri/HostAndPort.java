@@ -14,72 +14,72 @@ import uk.org.lidalia.net.Port;
 import static uk.org.lidalia.net.uri.Authority.Authority;
 
 public class HostAndPort extends RichObject implements Immutable {
-	
-	public static HostAndPort HostAndPort(Host host) {
-		return new HostAndPort(host, Optional.<Port>absent());
-	}
 
-	public static HostAndPort HostAndPort(Host host, Port port) {
-		return new HostAndPort(host, Optional.of(port));
-	}
+    public static HostAndPort HostAndPort(Host host) {
+        return new HostAndPort(host, Optional.<Port>absent());
+    }
 
-	public static HostAndPort HostAndPort(String hostAndPort) {
-		String portStr = StringUtils.substringAfterLast(hostAndPort, ":");
-		Optional<Port> port = (portStr.isEmpty()) ? Optional.<Port>absent() : Optional.of(Port.Port(portStr));
-		String hostStr = StringUtils.substringBeforeLast(hostAndPort, ":");
-		Host host = Host.Host(hostStr);
-		return new HostAndPort(host, port);
-	}
+    public static HostAndPort HostAndPort(Host host, Port port) {
+        return new HostAndPort(host, Optional.of(port));
+    }
 
-	@Identity private Host host;
-	@Identity private Optional<Port> port;
+    public static HostAndPort HostAndPort(String hostAndPort) {
+        String portStr = StringUtils.substringAfterLast(hostAndPort, ":");
+        Optional<Port> port = (portStr.isEmpty()) ? Optional.<Port>absent() : Optional.of(Port.Port(portStr));
+        String hostStr = StringUtils.substringBeforeLast(hostAndPort, ":");
+        Host host = Host.Host(hostStr);
+        return new HostAndPort(host, port);
+    }
 
-	private HostAndPort(Host host, Optional<Port> port) {
-		Validate.notNull(host);
-		Validate.notNull(port);
-		this.host = host;
-		this.port = port;
-	}
+    @Identity private Host host;
+    @Identity private Optional<Port> port;
 
-	public Host getHost() {
-		return host;
-	}
+    private HostAndPort(Host host, Optional<Port> port) {
+        Validate.notNull(host);
+        Validate.notNull(port);
+        this.host = host;
+        this.port = port;
+    }
 
-	public Optional<Port> getPort() {
-		return port;
-	}
+    public Host getHost() {
+        return host;
+    }
 
-	@Override public HostAndPort toImmutable() {
-		return this;
-	}
+    public Optional<Port> getPort() {
+        return port;
+    }
 
-	@Override public String toString() {
-		return (port.isPresent()) ? host + ":" + port.get() : host.toString();
-	}
+    @Override public HostAndPort toImmutable() {
+        return this;
+    }
 
-	String toString(Scheme scheme) {
-		if (!port.isPresent() || scheme.isDefaultPort(port.get())) {
-			return host.toString();
-		} else {
-			return host + ":" + port.get();
-		}
-	}
+    @Override public String toString() {
+        return (port.isPresent()) ? host + ":" + port.get() : host.toString();
+    }
 
-	public Authority toAuthority() {
-		return Authority(this);
-	}
+    String toString(Scheme scheme) {
+        if (!port.isPresent() || scheme.isDefaultPort(port.get())) {
+            return host.toString();
+        } else {
+            return host + ":" + port.get();
+        }
+    }
 
-	boolean equals(HostAndPort other, Scheme scheme) {
-		if (!host.equals(other.host)) return false;
-		Optional<Port> schemeDefaultPort = scheme.getDefaultPort();
-		return (port.or(schemeDefaultPort).equals(other.port.or(schemeDefaultPort)));
-	}
+    public Authority toAuthority() {
+        return Authority(this);
+    }
 
-	int hashCode(Scheme scheme) {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + host.hashCode();
-		result = prime * result + port.or(scheme.getDefaultPort()).hashCode();
-		return result;
-	}
+    boolean equals(HostAndPort other, Scheme scheme) {
+        if (!host.equals(other.host)) return false;
+        Optional<Port> schemeDefaultPort = scheme.getDefaultPort();
+        return (port.or(schemeDefaultPort).equals(other.port.or(schemeDefaultPort)));
+    }
+
+    int hashCode(Scheme scheme) {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + host.hashCode();
+        result = prime * result + port.or(scheme.getDefaultPort()).hashCode();
+        return result;
+    }
 }

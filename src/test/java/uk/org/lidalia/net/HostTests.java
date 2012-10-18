@@ -8,12 +8,12 @@ import static uk.org.lidalia.net.RegisteredName.RegisteredName;
 import org.junit.Test;
 
 public class HostTests {
-	
-	@Test public void ipv4Address() {
-		assertEquals(Ipv4Address(1, 2, 3, 4), Host("1.2.3.4"));
-	}
-	
-	@Test public void domainName() {
-		assertEquals(RegisteredName("example.com"), Host("example.com"));
-	}
+
+    @Test public void ipv4Address() {
+        assertEquals(Ipv4Address(1, 2, 3, 4), Host("1.2.3.4"));
+    }
+
+    @Test public void domainName() {
+        assertEquals(RegisteredName("example.com"), Host("example.com"));
+    }
 }
