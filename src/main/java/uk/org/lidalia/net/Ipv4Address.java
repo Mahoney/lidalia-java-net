@@ -2,7 +2,7 @@ package uk.org.lidalia.net;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.Validate.isTrue;
-import static uk.org.lidalia.lang.UnsignedByte.UnsignedByte;
+import static uk.org.lidalia.lang.UnsignedByte.from;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class Ipv4Address extends Host {
 		List<UnsignedByte> addressBytes = Lists.transform(splitAddress, new Function<String, UnsignedByte>() {
 			@Override
 			public UnsignedByte apply(String input) {
-				return UnsignedByte(Integer.parseInt(input));
+				return from(Integer.parseInt(input));
 			}
 		});
 		return new Ipv4Address(addressBytes.get(0), addressBytes.get(1), addressBytes.get(2), addressBytes.get(3));
@@ -32,7 +32,7 @@ public class Ipv4Address extends Host {
 	}
 
 	public static Ipv4Address Ipv4Address(int firstByte, int secondByte, int thirdByte, int fourthByte) {
-		return new Ipv4Address(UnsignedByte(firstByte), UnsignedByte(secondByte), UnsignedByte(thirdByte), UnsignedByte(fourthByte));
+		return new Ipv4Address(from(firstByte), from(secondByte), from(thirdByte), from(fourthByte));
 	}
 
 	@Identity private final UnsignedByte firstByte;

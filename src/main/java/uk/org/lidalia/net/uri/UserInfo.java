@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import uk.org.lidalia.lang.Collections3;
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.RichObject;
@@ -19,7 +19,9 @@ import static uk.org.lidalia.net.uri.UriText.UriText;
 
 public class UserInfo extends RichObject implements Iterable<UriText>, Immutable {
 
-	public static UserInfo UserInfo(String userInfo) {
+    private static final Joiner JOINER = Joiner.on(":");
+
+    public static UserInfo UserInfo(String userInfo) {
 		if (userInfo.length() == 0) return UserInfo();
 		List<String> elements = asList(userInfo.split(":"));
 		List<UriText> userInfoElements = Lists.transform(elements, new Function<String, UriText>() {
@@ -30,7 +32,7 @@ public class UserInfo extends RichObject implements Iterable<UriText>, Immutable
 		});
 		return new UserInfo(userInfoElements);
 	}
-	
+
 	public static UserInfo UserInfo(UriText... userInfoElements) {
 		return new UserInfo(asList(userInfoElements));
 	}
@@ -59,22 +61,22 @@ public class UserInfo extends RichObject implements Iterable<UriText>, Immutable
 
 	@Override
 	public String toString() {
-		return Collections3.toString(userInfoElements, "", ":", "");
+		return JOINER.join(userInfoElements);
 	}
-	
+
 	@Override
 	public Iterator<UriText> iterator() {
 		return userInfoElements.iterator();
 	}
-	
+
 	public int size() {
 		return userInfoElements.size();
 	}
-	
+
 	public UriText get(int index) {
 		return userInfoElements.get(index);
 	}
-	
+
 	public boolean hasElements() {
 		return userInfoElements.size() > 0;
 	}

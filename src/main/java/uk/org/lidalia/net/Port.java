@@ -21,11 +21,11 @@ public final class Port extends WrappedValue<Integer> implements Immutable {
 		Validate.isTrue(portNumber >= 0, "portNumber < 0");
 		Validate.isTrue(portNumber <= 65535, "portNumber > 65535");
 	}
-	
+
 	public Integer getPortNumber() {
-		return wrappedValue;
+		return getWrappedValue();
 	}
-	
+
 	@Override
 	public Port toImmutable() {
 		return this;
