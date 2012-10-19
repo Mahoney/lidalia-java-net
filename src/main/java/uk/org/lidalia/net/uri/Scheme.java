@@ -1,5 +1,6 @@
 package uk.org.lidalia.net.uri;
 
+import static uk.org.lidalia.lang.RichOptional.fromNullable;
 import static uk.org.lidalia.net.Port.Port;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Optional;
 
-import uk.org.lidalia.lang.Maps;
 import uk.org.lidalia.lang.WrappedString;
 import uk.org.lidalia.net.Port;
 
@@ -37,7 +37,8 @@ public final class Scheme extends WrappedString {
     }
 
     private static Scheme register(String schemeName, Optional<Port> defaultPort) {
-        return Maps.putIfAbsentReturningValue(schemes, schemeName.toLowerCase(), new Scheme(schemeName, defaultPort));
+        final Scheme value = new Scheme(schemeName, defaultPort);
+        return fromNullable(schemes.putIfAbsent(schemeName.toLowerCase(), value)).or(value);
     }
 
     private final Optional<Port> defaultPort;
