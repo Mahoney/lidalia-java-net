@@ -6,9 +6,9 @@ import uk.org.lidalia.lang.RichObject;
 public class Host extends RichObject {
 
     public static Host Host(String hostStr) {
-        if (Ipv4Address.isIpv4Address(hostStr)) {
+        try {
             return Ipv4Address.Ipv4Address(hostStr);
-        } else {
+        } catch (InvalidIpv4AddressException e) {
             return RegisteredName.RegisteredName(hostStr);
         }
     }

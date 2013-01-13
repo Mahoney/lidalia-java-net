@@ -1,30 +1,30 @@
 package uk.org.lidalia.net;
 
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.Validate.isTrue;
-import static uk.org.lidalia.lang.UnsignedByte.from;
+import static uk.org.lidalia.lang.UnsignedByte.UnsignedByte;
 
-import java.util.List;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.UnsignedByte;
 
 public class Ipv4Address extends Host {
 
-    public static Ipv4Address Ipv4Address(String ipv4AddressStr) {
-        List<String> splitAddress = asList(ipv4AddressStr.split("\\."));
-        int size = splitAddress.size();
-        isTrue(size == 4, "An IP v4 address must contain 4 bytes, had " + size);
-        List<UnsignedByte> addressBytes = Lists.transform(splitAddress, new Function<String, UnsignedByte>() {
-            @Override
-            public UnsignedByte apply(String input) {
-                return from(Integer.parseInt(input));
-            }
-        });
-        return new Ipv4Address(addressBytes.get(0), addressBytes.get(1), addressBytes.get(2), addressBytes.get(3));
+    private static final String DEC_OCTET_RGX = "25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]";
+    private static final Pattern IPV4_ADDRESS_PATTERN = Pattern.compile(
+            "("+DEC_OCTET_RGX+")\\.("+DEC_OCTET_RGX+")\\.("+DEC_OCTET_RGX+")\\.("+DEC_OCTET_RGX+")");
+
+    public static Ipv4Address Ipv4Address(String ipv4AddressStr) throws InvalidIpv4AddressException {
+        final Matcher ipv4AddressMatcher = IPV4_ADDRESS_PATTERN.matcher(ipv4AddressStr);
+        if (ipv4AddressMatcher.matches()) {
+            return new Ipv4Address(
+                    UnsignedByte(ipv4AddressMatcher.group(1)),
+                    UnsignedByte(ipv4AddressMatcher.group(2)),
+                    UnsignedByte(ipv4AddressMatcher.group(3)),
+                    UnsignedByte(ipv4AddressMatcher.group(4)));
+        } else {
+            throw new InvalidIpv4AddressException(ipv4AddressStr);
+        }
     }
 
     public static Ipv4Address Ipv4Address(UnsignedByte firstByte, UnsignedByte secondByte, UnsignedByte thirdByte, UnsignedByte fourthByte) {
@@ -32,7 +32,7 @@ public class Ipv4Address extends Host {
     }
 
     public static Ipv4Address Ipv4Address(int firstByte, int secondByte, int thirdByte, int fourthByte) {
-        return new Ipv4Address(from(firstByte), from(secondByte), from(thirdByte), from(fourthByte));
+        return new Ipv4Address(UnsignedByte(firstByte), UnsignedByte(secondByte), UnsignedByte(thirdByte), UnsignedByte(fourthByte));
     }
 
     @Identity private final UnsignedByte firstByte;
@@ -51,11 +51,6 @@ public class Ipv4Address extends Host {
 
     @Override
     public String toString() {
-        return firstByte + "." + secondByte + "." + thirdByte + "." + fourthByte;
-    }
-
-    public static boolean isIpv4Address(String hostStr) {
-        String decOctet = "25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]";
-        return hostStr.matches("((" + decOctet + ")\\.){3}(" + decOctet + ")");
+        return firstByte+"."+secondByte+"."+thirdByte+"."+fourthByte;
     }
 }

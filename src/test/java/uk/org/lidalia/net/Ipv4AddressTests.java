@@ -1,13 +1,21 @@
 package uk.org.lidalia.net;
 
+import java.util.concurrent.Callable;
+
 import org.junit.Test;
 
+import uk.org.lidalia.lang.RunAndCallable;
+
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static uk.org.lidalia.net.Ipv4Address.Ipv4Address;
+import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class Ipv4AddressTests {
 
+    private static final String NEWLINE = System.getProperty("line.separator");
     Iterable<String> validDecOctets = asList("0", "1", "9", "10", "99", "100", "199", "200", "255");
     Iterable<String> invalidDecOctets = asList("00", "09", "010", "099", "256", "265", "299", "300", "355");
 
@@ -17,8 +25,9 @@ public class Ipv4AddressTests {
             for (String decOctet2: validDecOctets) {
                 for (String decOctet3: validDecOctets) {
                     for (String decOctet4: validDecOctets) {
-                        String validIp = decOctet1 + "." + decOctet2 + "." + decOctet3 + "." + decOctet4;
-                        assertTrue(validIp + " is a valid ip", Ipv4Address.isIpv4Address(validIp));
+                        final Ipv4Address expected = Ipv4Address(parseInt(decOctet1), parseInt(decOctet2), parseInt(decOctet3), parseInt(decOctet4));
+                        final String ipv4AddressStr = decOctet1 + "." + decOctet2 + "." + decOctet3 + "." + decOctet4;
+                        assertThat(Ipv4Address(ipv4AddressStr), is(expected));
                     }
                 }
             }
@@ -28,26 +37,55 @@ public class Ipv4AddressTests {
     @Test
     public void isIpv4AddressInvalidOctets() throws Exception {
         for (String invalidDecOctet: invalidDecOctets) {
-            String invalidIp = invalidDecOctet + ".0.0.0";
-            assertFalse(invalidIp + " is invalid", Ipv4Address.isIpv4Address(invalidIp));
-            invalidIp = "0." + invalidDecOctet + ".0.0";
-            assertFalse(invalidIp + " is invalid", Ipv4Address.isIpv4Address(invalidIp));
-            invalidIp = "0.0." + invalidDecOctet + ".0";
-            assertFalse(invalidIp + " is invalid", Ipv4Address.isIpv4Address(invalidIp));
-            invalidIp = "0.0.0." + invalidDecOctet;
-            assertFalse(invalidIp + " is invalid", Ipv4Address.isIpv4Address(invalidIp));
+            assertInvalid(invalidDecOctet + ".0.0.0");
+            assertInvalid("0." + invalidDecOctet + ".0.0");
+            assertInvalid("0.0." + invalidDecOctet + ".0");
+            assertInvalid("0.0.0." + invalidDecOctet);
         }
     }
 
     @Test
     public void isIpv4Address3Octets() {
-        String invalidIp = "0.0.0";
-        assertFalse(invalidIp + " is invalid", Ipv4Address.isIpv4Address(invalidIp));
+        assertInvalid("0.0.0");
     }
 
     @Test
     public void isIpv4Address5Octets() {
-        String invalidIp = "0.0.0.0.0";
-        assertFalse(invalidIp + " is invalid", Ipv4Address.isIpv4Address(invalidIp));
+        assertInvalid("0.0.0.0.0");
+    }
+
+    @Test
+    public void isIpv4Address4Periods() {
+        assertInvalid("0.0.0.0.");
+    }
+
+    @Test
+    public void isIpv4AddressLineBefore() {
+        assertInvalid("blah"+NEWLINE+"0.0.0.0");
+    }
+
+    @Test
+    public void isIpv4AddressLineAfter() {
+        assertInvalid("0.0.0.0"+NEWLINE+"blah");
+    }
+
+    @Test
+    public void isIpv4AddressTextBefore() {
+        assertInvalid("blah0.0.0.0");
+    }
+
+    @Test
+    public void isIpv4AddressTextAfter() {
+        assertInvalid("0.0.0.0blah");
+    }
+
+    private void assertInvalid(final String invalidIp) {
+        InvalidIpv4AddressException e = shouldThrow(InvalidIpv4AddressException.class, new Callable<Void>() {
+            public Void call() throws InvalidIpv4AddressException {
+                Ipv4Address(invalidIp);
+                return null;
+            }
+        });
+        assertThat(e.getMessage(), is(invalidIp+" is not a valid IPv4 Address"));
     }
 }
