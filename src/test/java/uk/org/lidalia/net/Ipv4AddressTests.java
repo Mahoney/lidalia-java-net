@@ -4,8 +4,6 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
-import uk.org.lidalia.lang.RunAndCallable;
-
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;

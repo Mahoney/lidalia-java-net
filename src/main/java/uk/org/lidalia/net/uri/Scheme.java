@@ -1,6 +1,6 @@
 package uk.org.lidalia.net.uri;
 
-import static uk.org.lidalia.lang.RichOptional.fromNullable;
+import static com.google.common.base.Optional.fromNullable;
 import static uk.org.lidalia.net.Port.Port;
 
 import java.util.concurrent.ConcurrentHashMap;

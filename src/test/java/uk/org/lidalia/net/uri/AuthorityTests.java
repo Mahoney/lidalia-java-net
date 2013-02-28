@@ -4,11 +4,7 @@ import org.junit.Test;
 
 import com.google.common.base.Optional;
 
-import uk.org.lidalia.net.uri.Authority;
-import uk.org.lidalia.net.uri.Scheme;
-
 import static com.google.common.base.Optional.absent;
-import static com.google.common.base.Optional.of;
 import static uk.org.lidalia.net.Host.Host;
 import static uk.org.lidalia.net.Port.Port;
 import static uk.org.lidalia.net.uri.Authority.Authority;
