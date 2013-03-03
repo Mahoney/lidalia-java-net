@@ -16,7 +16,7 @@ import static uk.org.lidalia.net.uri.HierarchicalPart.HierarchicalPart;
 import static uk.org.lidalia.net.uri.Query.Query;
 import static uk.org.lidalia.net.uri.Scheme.Scheme;
 
-public class Uri implements Immutable {
+public final class Uri implements Immutable<Uri> {
 
     public static Uri Uri(String uri) {
         Scheme scheme = Scheme(StringUtils.substringBefore(uri, ":"));

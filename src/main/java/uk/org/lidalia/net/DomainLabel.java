@@ -4,7 +4,7 @@ import org.apache.commons.lang3.Validate;
 
 import uk.org.lidalia.lang.WrappedString;
 
-public class DomainLabel extends WrappedString {
+public class DomainLabel extends WrappedString<DomainLabel> {
 
     public static DomainLabel DomainLabel(String domainLabelStr) {
         return new DomainLabel(domainLabelStr);

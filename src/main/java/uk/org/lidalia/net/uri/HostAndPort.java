@@ -13,7 +13,7 @@ import uk.org.lidalia.net.Port;
 
 import static uk.org.lidalia.net.uri.Authority.Authority;
 
-public class HostAndPort extends RichObject implements Immutable {
+public class HostAndPort extends RichObject implements Immutable<HostAndPort> {
 
     public static HostAndPort HostAndPort(Host host) {
         return new HostAndPort(host, Optional.<Port>absent());

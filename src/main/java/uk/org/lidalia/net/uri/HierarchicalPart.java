@@ -12,7 +12,7 @@ import uk.org.lidalia.lang.RichObject;
 import static uk.org.lidalia.net.uri.Authority.Authority;
 import static uk.org.lidalia.net.uri.Path.Path;
 
-public class HierarchicalPart extends RichObject implements Immutable {
+public class HierarchicalPart extends RichObject implements Immutable<HierarchicalPart> {
 
     public static HierarchicalPart HierarchicalPart(String hierarchicalPart) {
         Authority authority;

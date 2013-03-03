@@ -5,7 +5,7 @@ import org.apache.commons.lang3.Validate;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.WrappedValue;
 
-public final class Port extends WrappedValue<Integer> implements Immutable {
+public final class Port extends WrappedValue<Integer> implements Immutable<Port> {
 
     public static Port Port(String portStr) {
         return Port(Integer.parseInt(portStr));

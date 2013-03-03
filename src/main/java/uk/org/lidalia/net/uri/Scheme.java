@@ -14,7 +14,7 @@ import com.google.common.base.Optional;
 import uk.org.lidalia.lang.WrappedString;
 import uk.org.lidalia.net.Port;
 
-public final class Scheme extends WrappedString {
+public final class Scheme extends WrappedString<Scheme> {
 
     private static final String VALID_SCHEME_REGEX = "[a-zA-Z][a-zA-Z0-9+\\-\\.]*";
     private static final Pattern VALID_SCHEME_PATTERN = Pattern.compile(VALID_SCHEME_REGEX);
@@ -75,10 +75,5 @@ public final class Scheme extends WrappedString {
 
     public boolean isDefaultPort(Port port) {
         return defaultPort.isPresent() && port.equals(defaultPort.get());
-    }
-
-    @Override
-    public Scheme toImmutable() {
-        return this;
     }
 }

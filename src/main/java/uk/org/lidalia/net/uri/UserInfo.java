@@ -15,43 +15,43 @@ import uk.org.lidalia.lang.RichObject;
 
 import static com.google.common.base.Optional.of;
 import static java.util.Arrays.asList;
-import static uk.org.lidalia.net.uri.UriText.UriText;
+import static uk.org.lidalia.net.uri.UriEncodedString.UriEncodedString;
 
-public class UserInfo extends RichObject implements Iterable<UriText>, Immutable {
+public class UserInfo extends RichObject implements Iterable<UriEncodedString>, Immutable<UserInfo> {
 
     private static final Joiner JOINER = Joiner.on(":");
 
     public static UserInfo UserInfo(String userInfo) {
         if (userInfo.length() == 0) return UserInfo();
         List<String> elements = asList(userInfo.split(":"));
-        List<UriText> userInfoElements = Lists.transform(elements, new Function<String, UriText>() {
+        List<UriEncodedString> userInfoElements = Lists.transform(elements, new Function<String, UriEncodedString>() {
             @Override
-            public UriText apply(String input) {
-                return UriText(input);
+            public UriEncodedString apply(String input) {
+                return UriEncodedString(input);
             }
         });
         return new UserInfo(userInfoElements);
     }
 
-    public static UserInfo UserInfo(UriText... userInfoElements) {
+    public static UserInfo UserInfo(UriEncodedString... userInfoElements) {
         return new UserInfo(asList(userInfoElements));
     }
 
-    public static UserInfo UserInfo(List<UriText> userInfoElements) {
+    public static UserInfo UserInfo(List<UriEncodedString> userInfoElements) {
         return new UserInfo(userInfoElements);
     }
 
-    @Identity private final List<UriText> userInfoElements;
+    @Identity private final List<UriEncodedString> userInfoElements;
 
-    private UserInfo(List<UriText> userInfoElements) {
+    private UserInfo(List<UriEncodedString> userInfoElements) {
         super();
         this.userInfoElements = Collections.unmodifiableList(userInfoElements);
     }
 
-    public Optional<UriText> getUserId() {
+    public Optional<UriEncodedString> getUserId() {
         return userInfoElements.size() > 0 ?
                 of(userInfoElements.get(0))
-                : Optional.<UriText>absent();
+                : Optional.<UriEncodedString>absent();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class UserInfo extends RichObject implements Iterable<UriText>, Immutable
     }
 
     @Override
-    public Iterator<UriText> iterator() {
+    public Iterator<UriEncodedString> iterator() {
         return userInfoElements.iterator();
     }
 
@@ -73,7 +73,7 @@ public class UserInfo extends RichObject implements Iterable<UriText>, Immutable
         return userInfoElements.size();
     }
 
-    public UriText get(int index) {
+    public UriEncodedString get(int index) {
         return userInfoElements.get(index);
     }
 

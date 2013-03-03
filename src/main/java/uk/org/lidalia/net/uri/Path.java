@@ -2,7 +2,7 @@ package uk.org.lidalia.net.uri;
 
 import uk.org.lidalia.lang.WrappedString;
 
-public class Path extends WrappedString {
+public final class Path extends WrappedString<Path> {
 
     public static Path Path(String path) {
         return new Path(path);
@@ -10,9 +10,5 @@ public class Path extends WrappedString {
 
     private Path(String wrappedValue) {
         super(wrappedValue);
-    }
-
-    @Override public Path toImmutable() {
-        return this;
     }
 }

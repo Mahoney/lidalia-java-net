@@ -10,11 +10,10 @@ import uk.org.lidalia.lang.RichObject;
 import uk.org.lidalia.net.Host;
 import uk.org.lidalia.net.Port;
 
-import static com.google.common.base.Optional.of;
 import static uk.org.lidalia.net.uri.UserInfo.UserInfo;
 import static uk.org.lidalia.net.uri.HostAndPort.HostAndPort;
 
-public class Authority extends RichObject implements Immutable {
+public class Authority extends RichObject implements Immutable<Authority> {
 
     public static Authority Authority(String authority) {
         String userInfoStr;

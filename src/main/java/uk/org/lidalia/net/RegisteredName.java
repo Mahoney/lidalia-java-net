@@ -7,7 +7,6 @@ public class RegisteredName extends Host {
     @Identity private final String name;
 
     public static RegisteredName RegisteredName(String string) {
-        // TODO Auto-generated method stub
         return new RegisteredName(string);
     }
 
