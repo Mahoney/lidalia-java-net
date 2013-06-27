@@ -4,6 +4,8 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
+import uk.org.lidalia.lang.Task;
+
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
@@ -78,10 +80,9 @@ public class Ipv4AddressTests {
     }
 
     private void assertInvalid(final String invalidIp) {
-        InvalidIpv4AddressException e = shouldThrow(InvalidIpv4AddressException.class, new Callable<Void>() {
-            public Void call() throws InvalidIpv4AddressException {
+        InvalidIpv4AddressException e = shouldThrow(InvalidIpv4AddressException.class, new Task() {
+            public void perform() throws InvalidIpv4AddressException {
                 Ipv4Address(invalidIp);
-                return null;
             }
         });
         assertThat(e.getMessage(), is(invalidIp+" is not a valid IPv4 Address"));
