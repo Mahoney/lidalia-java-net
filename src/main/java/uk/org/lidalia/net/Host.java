@@ -1,16 +1,12 @@
 package uk.org.lidalia.net;
 
-import static uk.org.lidalia.net.Ipv4Address.Ipv4Address;
 import uk.org.lidalia.lang.RichObject;
 
-public class Host extends RichObject {
+public abstract class Host extends RichObject {
 
+    private static final HostParser hostParser = new HostParser();
     public static Host Host(String hostStr) {
-        try {
-            return Ipv4Address.Ipv4Address(hostStr);
-        } catch (InvalidIpv4AddressException e) {
-            return RegisteredName.RegisteredName(hostStr);
-        }
+        return hostParser.parse(hostStr);
     }
 
     Host() {

@@ -1,7 +1,5 @@
 package uk.org.lidalia.net;
 
-import java.util.concurrent.Callable;
-
 import org.junit.Test;
 
 import uk.org.lidalia.lang.Task;
@@ -80,8 +78,8 @@ public class Ipv4AddressTests {
     }
 
     private void assertInvalid(final String invalidIp) {
-        InvalidIpv4AddressException e = shouldThrow(InvalidIpv4AddressException.class, new Task() {
-            public void perform() throws InvalidIpv4AddressException {
+        Ipv4AddressParseException e = shouldThrow(Ipv4AddressParseException.class, new Task() {
+            public void perform() throws Ipv4AddressParseException {
                 Ipv4Address(invalidIp);
             }
         });
