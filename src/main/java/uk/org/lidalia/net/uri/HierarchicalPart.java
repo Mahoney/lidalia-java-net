@@ -8,25 +8,16 @@ import com.google.common.base.Optional;
 import uk.org.lidalia.lang.Identity;
 import uk.org.lidalia.lang.Immutable;
 import uk.org.lidalia.lang.RichObject;
+import uk.org.lidalia.net.ParseException;
 
 import static uk.org.lidalia.net.uri.Authority.Authority;
 import static uk.org.lidalia.net.uri.Path.Path;
 
 public class HierarchicalPart extends RichObject implements Immutable<HierarchicalPart> {
 
-    public static HierarchicalPart HierarchicalPart(String hierarchicalPart) {
-        Authority authority;
-        Path path;
-        if (hierarchicalPart.startsWith("//")) {
-            String hierarchicalPartWithoutStart = hierarchicalPart.substring(2);
-            String authorityStr = StringUtils.substringBefore(hierarchicalPartWithoutStart, "/");
-            authority = Authority(authorityStr);
-            path = Path(StringUtils.substringAfter(hierarchicalPartWithoutStart, authorityStr));
-        } else {
-            authority = null;
-            path = Path(hierarchicalPart);
-        }
-        return new HierarchicalPart(Optional.fromNullable(authority), path);
+    private static final HierarchicalPartParser parser = new HierarchicalPartParser();
+    public static HierarchicalPart HierarchicalPart(String hierarchicalPart) throws ParseException {
+        return parser.parse(hierarchicalPart);
     }
 
     public static HierarchicalPart HierarchicalPart(Authority authority, Path path) {
@@ -40,7 +31,7 @@ public class HierarchicalPart extends RichObject implements Immutable<Hierarchic
     @Identity private final Optional<Authority> authority;
     @Identity private final Path path;
 
-    private HierarchicalPart(Optional<Authority> authority, Path path) {
+    HierarchicalPart(Optional<Authority> authority, Path path) {
         super();
         Validate.notNull(authority);
         Validate.notNull(path);

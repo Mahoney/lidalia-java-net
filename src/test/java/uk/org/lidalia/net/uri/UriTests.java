@@ -2,7 +2,7 @@ package uk.org.lidalia.net.uri;
 
 import org.junit.Test;
 
-import uk.org.lidalia.net.uri.Uri;
+import uk.org.lidalia.net.ParseException;
 
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
@@ -25,7 +25,7 @@ public class UriTests {
     private final String uriWithFragment = scheme + ":" + hierarchicalPart + "#" + fragment;
     private final String uriWithQueryAndFragment = scheme + ":" + hierarchicalPart + "?" + query + "#" + fragment;
 
-    @Test public void singleStringConstructorForUriWorks() {
+    @Test public void singleStringConstructorForUriWorks() throws ParseException {
         Uri uri = Uri(uriStr);
         assertEquals(Scheme(scheme), uri.getScheme());
         assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
@@ -34,7 +34,7 @@ public class UriTests {
         assertEquals(uriStr, uri.toString());
     }
 
-    @Test public void singleStringConstructorForUriWithQueryWorks() {
+    @Test public void singleStringConstructorForUriWithQueryWorks() throws ParseException {
         Uri uri = Uri(uriWithQuery);
         assertEquals(Scheme(scheme), uri.getScheme());
         assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
@@ -43,7 +43,7 @@ public class UriTests {
         assertEquals(uriWithQuery, uri.toString());
     }
 
-    @Test public void singleStringConstructorForUriWithFragmentWorks() {
+    @Test public void singleStringConstructorForUriWithFragmentWorks() throws ParseException {
         Uri uri = Uri(uriWithFragment);
         assertEquals(Scheme(scheme), uri.getScheme());
         assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
@@ -52,7 +52,7 @@ public class UriTests {
         assertEquals(uriWithFragment, uri.toString());
     }
 
-    @Test public void singleStringConstructorForUriWithQueryAndFragmentWorks() {
+    @Test public void singleStringConstructorForUriWithQueryAndFragmentWorks() throws ParseException {
         Uri uri = Uri(uriWithQueryAndFragment);
         assertEquals(Scheme(scheme), uri.getScheme());
         assertEquals(HierarchicalPart(hierarchicalPart), uri.getHierarchicalPart());
@@ -61,12 +61,12 @@ public class UriTests {
         assertEquals(uriWithQueryAndFragment, uri.toString());
     }
 
-    @Test public void toStringOmitsDefaultPortForScheme() {
+    @Test public void toStringOmitsDefaultPortForScheme() throws ParseException {
         Uri uri = Uri("http://example.com:80/over/there");
         assertEquals("http://example.com/over/there", uri.toString());
     }
 
-    @Test public void equalsForEqualUrisWithDefaultPortForOneScheme() {
+    @Test public void equalsForEqualUrisWithDefaultPortForOneScheme() throws ParseException {
         Uri uri1 = Uri("http://example.com:80/over/there");
         Uri uri2 = Uri("http://example.com/over/there");
 
@@ -74,7 +74,7 @@ public class UriTests {
         assertEquals(uri2, uri1);
     }
 
-    @Test public void equalsForUnequalUrisWithDefaultPortForOneScheme() {
+    @Test public void equalsForUnequalUrisWithDefaultPortForOneScheme() throws ParseException {
         Uri uri1 = Uri("http://example.com/over/there");
         Uri uri2 = Uri("http://example.com:443/over/there");
 
@@ -82,35 +82,35 @@ public class UriTests {
         assertFalse(uri2.equals(uri1));
     }
 
-    @Test public void equalsWorksWithPorts() {
+    @Test public void equalsWorksWithPorts() throws ParseException {
         Uri uri1 = Uri("http://example.com:80/over/there");
         Uri uri2 = Uri("http://example.com:80/over/there");
 
         assertEquals(uri1, uri2);
     }
 
-    @Test public void equalsWorksWithoutPorts() {
+    @Test public void equalsWorksWithoutPorts() throws ParseException {
         Uri uri1 = Uri("http://example.com/over/there");
         Uri uri2 = Uri("http://example.com/over/there");
 
         assertEquals(uri1, uri2);
     }
 
-    @Test public void hashCodeForEqualUrisWithDefaultPortForOneScheme() {
+    @Test public void hashCodeForEqualUrisWithDefaultPortForOneScheme() throws ParseException {
         Uri uri1 = Uri("http://example.com:80/over/there");
         Uri uri2 = Uri("http://example.com/over/there");
 
         assertEquals(uri1.hashCode(), uri2.hashCode());
     }
 
-    @Test public void hashCodeForEqualUris() {
+    @Test public void hashCodeForEqualUris() throws ParseException {
         Uri uri1 = Uri("http://example.com/over/there");
         Uri uri2 = Uri("http://example.com/over/there");
 
         assertEquals(uri1.hashCode(), uri2.hashCode());
     }
 
-    @Test public void hashCodeForUnequalUris() {
+    @Test public void hashCodeForUnequalUris() throws ParseException {
         Uri uri1 = Uri("http://example.com:443/over/there");
         Uri uri2 = Uri("http://example.com/over/there");
 

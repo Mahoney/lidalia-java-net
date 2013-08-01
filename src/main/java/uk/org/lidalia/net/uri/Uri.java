@@ -1,36 +1,34 @@
 package uk.org.lidalia.net.uri;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Optional;
 
+import uk.org.lidalia.lang.Exceptions;
 import uk.org.lidalia.lang.Immutable;
+import uk.org.lidalia.net.ParseException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.google.common.base.Optional.of;
-import static uk.org.lidalia.net.uri.Fragment.Fragment;
 import static uk.org.lidalia.net.uri.HierarchicalPart.HierarchicalPart;
-import static uk.org.lidalia.net.uri.Query.Query;
 import static uk.org.lidalia.net.uri.Scheme.Scheme;
 
 public final class Uri implements Immutable<Uri> {
 
-    public static Uri Uri(String uri) {
-        Scheme scheme = Scheme(StringUtils.substringBefore(uri, ":"));
-        String withoutScheme = StringUtils.substringAfter(uri, ":");
+    private static final UriParser uriParser = new UriParser();
 
-        String fragmentStr = StringUtils.substringAfterLast(withoutScheme, "#");
-        String hierarchicalPartAndQuery = StringUtils.substringBeforeLast(withoutScheme, "#");
-        String hierarchicalPartStr = StringUtils.substringBefore(hierarchicalPartAndQuery, "?");
-        String queryStr = StringUtils.substringAfter(hierarchicalPartAndQuery, "?");
+    public static Uri Uri(String uri) throws ParseException {
+        return uriParser.parse(uri);
+    }
 
-        HierarchicalPart hierarchicalPart = HierarchicalPart(hierarchicalPartStr);
-        Optional<Query> query = (queryStr.isEmpty() ? Optional.<Query>absent() : of(Query(queryStr)));
-        Optional<Fragment> fragment = (fragmentStr.isEmpty() ? Optional.<Fragment>absent() : of(Fragment(fragmentStr)));
-        return new Uri(scheme, hierarchicalPart, query, fragment);
+    public static Uri Uri(URI javaUri) {
+        try {
+            return uriParser.parse(javaUri.toString());
+        } catch (ParseException e) {
+            return Exceptions.throwUnchecked(e, null);
+        }
     }
 
     public static Uri Uri(Scheme scheme, HierarchicalPart hierarchicalPart) {
@@ -49,16 +47,12 @@ public final class Uri implements Immutable<Uri> {
         return new Uri(scheme, hierarchicalPart, of(query), of(fragment));
     }
 
-    public static Uri Uri(URI javaUri) {
-        return Uri(javaUri.toString());
-    }
-
     private final Scheme scheme;
     private final HierarchicalPart hierarchicalPart;
     private final Optional<Query> query;
     private final Optional<Fragment> fragment;
 
-    private Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Optional<Query> query, Optional<Fragment> fragment) {
+    Uri(Scheme scheme, HierarchicalPart hierarchicalPart, Optional<Query> query, Optional<Fragment> fragment) {
         Validate.notNull(scheme, "scheme is null");
         Validate.notNull(hierarchicalPart, "hierarchical part is null");
         Validate.notNull(query, "query is null");
@@ -97,7 +91,7 @@ public final class Uri implements Immutable<Uri> {
         try {
             return new URI(scheme.toString(), getAuthority().toString(), getPath().toString(), query.toString(), fragment.toString());
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("Uri [" + this + "] should always be a valid java.net.URI", e);
+            throw new IllegalStateException("parse [" + this + "] should always be a valid java.net.URI", e);
         }
     }
 
