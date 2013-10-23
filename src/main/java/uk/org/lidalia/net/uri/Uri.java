@@ -91,7 +91,7 @@ public final class Uri implements Immutable<Uri> {
         try {
             return new URI(scheme.toString(), getAuthority().toString(), getPath().toString(), query.toString(), fragment.toString());
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("parse [" + this + "] should always be a valid java.net.URI", e);
+            throw new IllegalStateException("[" + this + "] should always be a valid java.net.URI", e);
         }
     }
 
